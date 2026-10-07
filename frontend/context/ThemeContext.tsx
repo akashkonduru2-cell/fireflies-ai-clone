@@ -12,9 +12,20 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
+function applyThemeClass(t: Theme) {
+  if (typeof document === "undefined") return;
+  const root = document.documentElement;
+  if (t === "dark") {
+    root.classList.add("dark");
+    root.setAttribute("data-theme", "dark");
+  } else {
+    root.classList.remove("dark");
+    root.setAttribute("data-theme", "light");
+  }
+}
+
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>("light");
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     try {
@@ -31,19 +42,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     } catch {
       // fallback
     }
-    setMounted(true);
   }, []);
-
-  const applyThemeClass = (t: Theme) => {
-    const root = document.documentElement;
-    if (t === "dark") {
-      root.classList.add("dark");
-      root.setAttribute("data-theme", "dark");
-    } else {
-      root.classList.remove("dark");
-      root.setAttribute("data-theme", "light");
-    }
-  };
 
   const setTheme = (nextTheme: Theme) => {
     setThemeState(nextTheme);

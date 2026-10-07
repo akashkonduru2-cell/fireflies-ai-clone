@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect, useCallback, Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -11,8 +11,6 @@ import {
   Tag,
   ArrowRight,
   Sparkles,
-  Calendar,
-  Clock,
   Loader2
 } from "lucide-react";
 import { Sidebar } from "@/components/Sidebar";
@@ -33,7 +31,7 @@ function SearchContent() {
   const [isLoading, setIsLoading] = useState(false);
   const [createModalOpen, setCreateModalOpen] = useState(false);
 
-  const performSearch = async (term: string) => {
+  const performSearch = useCallback(async (term: string) => {
     if (!term.trim()) {
       setData(null);
       return;
@@ -42,19 +40,19 @@ function SearchContent() {
       setIsLoading(true);
       const res = await api.search(term.trim());
       setData(res);
-    } catch (err: any) {
+    } catch {
       showToast("Search failed", "error");
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [showToast]);
 
   useEffect(() => {
     if (initialQuery) {
       setQuery(initialQuery);
       performSearch(initialQuery);
     }
-  }, [initialQuery]);
+  }, [initialQuery, performSearch]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

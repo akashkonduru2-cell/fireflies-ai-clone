@@ -1,18 +1,16 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Link from "next/link";
 import {
   CheckSquare,
   Circle,
   CheckCircle2,
   Calendar,
-  Users,
   Search,
   ArrowRight,
   Trash2,
-  Loader2,
-  AlertCircle
+  Loader2
 } from "lucide-react";
 import { Sidebar } from "@/components/Sidebar";
 import { Header } from "@/components/Header";
@@ -30,21 +28,21 @@ export default function ActionItemsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [createModalOpen, setCreateModalOpen] = useState(false);
 
-  const fetchItems = async () => {
+  const fetchItems = useCallback(async () => {
     try {
       setIsLoading(true);
       const data = await api.getAllActionItems();
       setItems(data);
-    } catch (err: any) {
+    } catch {
       showToast("Failed to load action items", "error");
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [showToast]);
 
   useEffect(() => {
     fetchItems();
-  }, []);
+  }, [fetchItems]);
 
   const handleToggle = async (item: ActionItem) => {
     try {
@@ -58,7 +56,7 @@ export default function ActionItemsPage() {
           : "Action item marked incomplete",
         "success"
       );
-    } catch (err: any) {
+    } catch {
       showToast("Failed to update status", "error");
     }
   };
@@ -68,7 +66,7 @@ export default function ActionItemsPage() {
       await api.deleteActionItem(id);
       setItems((prev) => prev.filter((i) => i.id !== id));
       showToast("Action item deleted", "info");
-    } catch (err: any) {
+    } catch {
       showToast("Failed to delete item", "error");
     }
   };

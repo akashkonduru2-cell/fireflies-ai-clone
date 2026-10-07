@@ -10,12 +10,8 @@ import {
   Users,
   Edit2,
   Trash2,
-  Sparkles,
-  Share2,
-  Download,
   AlertCircle,
-  Loader2,
-  Check
+  Loader2
 } from "lucide-react";
 import { Sidebar } from "@/components/Sidebar";
 import { Header } from "@/components/Header";

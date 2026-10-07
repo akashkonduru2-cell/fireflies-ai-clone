@@ -3,13 +3,10 @@
 import React, { useState } from "react";
 import {
   CheckSquare,
-  Square,
   Plus,
   Calendar,
-  User,
   Edit2,
   Trash2,
-  Sparkles,
   CheckCircle2,
   Circle
 } from "lucide-react";
@@ -68,67 +65,76 @@ export function ActionItems({
           </div>
           <div>
             <h3 className="font-bold text-sm sm:text-base text-slate-900 dark:text-white flex items-center gap-2">
-              Action Items
-              <span className="text-[11px] font-mono font-medium px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400">
+              Action Items & Tasks
+              <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700">
                 {completedCount}/{actionItems.length} Done
               </span>
             </h3>
             <span className="text-[11px] text-slate-400">
-              Tasks and deliverables assigned during the session
+              Assigned deliverables and follow-ups
             </span>
           </div>
         </div>
 
-        {/* Add action item trigger */}
         <button
           onClick={handleOpenAdd}
-          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium bg-purple-600 hover:bg-purple-700 text-white rounded-xl shadow-xs transition-colors cursor-pointer"
+          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl shadow-xs transition-colors cursor-pointer"
         >
           <Plus className="w-3.5 h-3.5" />
           <span>Add Task</span>
         </button>
       </div>
 
-      {/* Action Items List */}
+      {/* Progress Bar */}
+      {actionItems.length > 0 && (
+        <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden">
+          <div
+            className="bg-emerald-500 h-1.5 rounded-full transition-all duration-300"
+            style={{
+              width: `${(completedCount / actionItems.length) * 100}%`,
+            }}
+          />
+        </div>
+      )}
+
+      {/* Task List */}
       <div className="space-y-2.5">
-        {actionItems && actionItems.length > 0 ? (
+        {actionItems.length > 0 ? (
           actionItems.map((item) => (
             <div
               key={item.id}
-              className={`group flex items-start justify-between gap-3 p-3 sm:p-3.5 rounded-xl border transition-all ${
+              className={`group flex items-start justify-between gap-3 p-3.5 rounded-xl border transition-all ${
                 item.completed
-                  ? "bg-slate-50/60 dark:bg-slate-900/30 border-slate-200/60 dark:border-slate-800/50 opacity-75"
-                  : "bg-white dark:bg-slate-800/40 border-slate-200 dark:border-slate-700/70 hover:border-purple-300 dark:hover:border-purple-700"
+                  ? "bg-slate-50/60 dark:bg-slate-900/40 border-slate-200/60 dark:border-slate-800/60 opacity-60"
+                  : "bg-white dark:bg-slate-900/80 border-slate-200 dark:border-slate-800 shadow-xs hover:border-slate-300 dark:hover:border-slate-700"
               }`}
             >
-              {/* Checkbox & Task info */}
+              {/* Checkbox & Details */}
               <div className="flex items-start gap-3 flex-1 min-w-0">
                 <button
-                  type="button"
                   onClick={() => handleToggleComplete(item)}
-                  className="mt-0.5 text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors cursor-pointer"
-                  title={item.completed ? "Mark incomplete" : "Mark complete"}
+                  className="mt-0.5 text-slate-400 hover:text-emerald-500 transition-colors cursor-pointer"
                 >
                   {item.completed ? (
-                    <CheckCircle2 className="w-4 h-4 text-emerald-500 fill-emerald-50 dark:fill-emerald-950/40" />
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                   ) : (
-                    <Circle className="w-4 h-4 text-slate-400 hover:text-purple-500" />
+                    <Circle className="w-4 h-4 text-slate-400 group-hover:text-emerald-500" />
                   )}
                 </button>
 
-                <div className="flex flex-col flex-1 min-w-0">
+                <div className="flex flex-col min-w-0 flex-1">
                   <span
-                    className={`text-xs sm:text-sm font-medium leading-snug break-words ${
+                    className={`text-xs sm:text-sm font-medium leading-relaxed break-words ${
                       item.completed
                         ? "line-through text-slate-400 dark:text-slate-500"
-                        : "text-slate-800 dark:text-slate-200"
+                        : "text-slate-900 dark:text-slate-100"
                     }`}
                   >
                     {item.task}
                   </span>
 
-                  {/* Assignee & Due Date tags */}
-                  <div className="flex flex-wrap items-center gap-2.5 mt-2 text-xs text-slate-500 dark:text-slate-400">
+                  <div className="flex flex-wrap items-center gap-3 mt-1.5 text-[11px] text-slate-400">
+                    {/* Assignee Avatar */}
                     <div className="flex items-center gap-1.5">
                       <div
                         className={`w-4 h-4 rounded-full bg-gradient-to-tr ${getAvatarColor(
@@ -137,15 +143,15 @@ export function ActionItems({
                       >
                         {getInitials(item.assignee)}
                       </div>
-                      <span className="text-[11px] font-medium text-slate-600 dark:text-slate-300">
+                      <span className="font-medium text-slate-600 dark:text-slate-300">
                         {item.assignee}
                       </span>
                     </div>
 
                     {item.due_date && (
                       <>
-                        <span className="text-slate-300 dark:text-slate-700">•</span>
-                        <div className="flex items-center gap-1 text-[11px]">
+                        <span>•</span>
+                        <div className="flex items-center gap-1">
                           <Calendar className="w-3 h-3 text-slate-400" />
                           <span>{item.due_date}</span>
                         </div>
@@ -155,18 +161,18 @@ export function ActionItems({
                 </div>
               </div>
 
-              {/* Action Buttons: Edit / Delete */}
-              <div className="flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
+              {/* Actions */}
+              <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                 <button
                   onClick={() => handleOpenEdit(item)}
-                  className="p-1 rounded-md text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                  className="p-1 text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                   title="Edit task"
                 >
                   <Edit2 className="w-3.5 h-3.5" />
                 </button>
                 <button
                   onClick={() => onDeleteActionItem(item.id)}
-                  className="p-1 rounded-md text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40 transition-colors"
+                  className="p-1 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                   title="Delete task"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
@@ -181,7 +187,7 @@ export function ActionItems({
               No action items recorded yet
             </p>
             <p className="text-[11px] text-slate-400 mt-1">
-              Click "+ Add Task" to track deliverables from this meeting.
+              Click &ldquo;+ Add Task&rdquo; to track deliverables from this meeting.
             </p>
           </div>
         )}

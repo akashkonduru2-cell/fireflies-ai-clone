@@ -10,8 +10,7 @@ import {
   Moon,
   Sun,
   Database,
-  CheckCircle,
-  ExternalLink
+  CheckCircle
 } from "lucide-react";
 import { Sidebar } from "@/components/Sidebar";
 import { Header } from "@/components/Header";
@@ -21,12 +20,12 @@ import { useToast } from "@/context/ToastContext";
 import { api } from "@/lib/api";
 import { CreateMeetingPayload } from "@/types";
 
+type SettingTab = "appearance" | "profile" | "notifications" | "integrations" | "security";
+
 export default function SettingsPage() {
   const { theme, setTheme } = useTheme();
   const { showToast } = useToast();
-  const [activeTab, setActiveTab] = useState<
-    "appearance" | "profile" | "notifications" | "integrations" | "security"
-  >("appearance");
+  const [activeTab, setActiveTab] = useState<SettingTab>("appearance");
   const [createModalOpen, setCreateModalOpen] = useState(false);
 
   const handleCreateMeeting = async (payload: CreateMeetingPayload) => {
@@ -34,7 +33,7 @@ export default function SettingsPage() {
     showToast("Meeting created!", "success");
   };
 
-  const tabs = [
+  const tabs: { id: SettingTab; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
     { id: "appearance", label: "Appearance & Theme", icon: Palette },
     { id: "profile", label: "Profile & Account", icon: User },
     { id: "notifications", label: "Notifications", icon: Bell },
@@ -66,7 +65,7 @@ export default function SettingsPage() {
                 return (
                   <button
                     key={tab.id}
-                    onClick={() => setActiveTab(tab.id as any)}
+                    onClick={() => setActiveTab(tab.id)}
                     className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-medium transition-colors text-left cursor-pointer ${
                       active
                         ? "bg-purple-50 dark:bg-purple-600/20 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-500/30"

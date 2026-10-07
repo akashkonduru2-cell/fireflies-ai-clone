@@ -8,10 +8,7 @@ import {
   Building,
   Shield,
   Save,
-  CheckCircle,
-  Clock,
-  Calendar,
-  Sparkles
+  CheckCircle
 } from "lucide-react";
 import { Sidebar } from "@/components/Sidebar";
 import { Header } from "@/components/Header";

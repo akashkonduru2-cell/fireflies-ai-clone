@@ -2,7 +2,6 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import {
-  Sparkles,
   Plus,
   Clock,
   CheckSquare,
@@ -10,8 +9,7 @@ import {
   FileText,
   AlertCircle,
   RefreshCw,
-  Search,
-  Filter
+  Search
 } from "lucide-react";
 import { Sidebar } from "@/components/Sidebar";
 import { Header } from "@/components/Header";
@@ -117,7 +115,7 @@ export default function DashboardPage() {
       <div className="flex-1 flex flex-col min-w-0">
         <Header
           title="Meeting Library"
-          subtitle="Explore recorded sessions, interactive transcripts, and AI takeaways"
+          subtitle="Explore recorded sessions, interactive transcripts, and AI Takeaways"
           onOpenCreateModal={() => setCreateModalOpen(true)}
         />
 

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Sparkles, FileText, Users, Clock, Calendar, CheckSquare, Plus, Loader2 } from "lucide-react";
+import { X, Sparkles, FileText, Users, Clock, Calendar, CheckSquare, Loader2 } from "lucide-react";
 import { CreateMeetingPayload } from "@/types";
 
 interface CreateMeetingModalProps {

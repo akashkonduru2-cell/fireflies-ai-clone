@@ -8,9 +8,7 @@ import {
   RotateCw,
   Volume2,
   VolumeX,
-  Gauge,
-  Sparkles,
-  Radio
+  Gauge
 } from "lucide-react";
 import { formatTime } from "@/lib/utils";
 
@@ -37,7 +35,6 @@ export function MeetingPlayer({
   const [volume, setVolume] = useState(0.5);
 
   const audioCtxRef = useRef<AudioContext | null>(null);
-  const gainNodeRef = useRef<GainNode | null>(null);
   const oscNodeRef = useRef<OscillatorNode | null>(null);
 
   const speedOptions = [0.75, 1.0, 1.25, 1.5, 2.0];
@@ -48,33 +45,34 @@ export function MeetingPlayer({
 
     if (isPlaying && !isMuted && volume > 0) {
       try {
-        const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
-        if (!audioCtxRef.current) {
+        const AudioCtx = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        if (!audioCtxRef.current && AudioCtx) {
           audioCtxRef.current = new AudioCtx();
         }
-        if (audioCtxRef.current.state === "suspended") {
+        if (audioCtxRef.current?.state === "suspended") {
           audioCtxRef.current.resume();
         }
 
-        // Create oscillator for pleasant ambient conference hum / tone
-        const osc = audioCtxRef.current.createOscillator();
-        const gain = audioCtxRef.current.createGain();
-        
-        // Gentle chord frequency (e.g. 220Hz harmonic A3)
-        osc.type = "sine";
-        osc.frequency.setValueAtTime(220, audioCtxRef.current.currentTime);
+        if (audioCtxRef.current) {
+          // Create oscillator for pleasant ambient conference hum / tone
+          const osc = audioCtxRef.current.createOscillator();
+          const gain = audioCtxRef.current.createGain();
 
-        // Low volume ambient presence
-        const targetGain = Math.min(0.04, volume * 0.05);
-        gain.gain.setValueAtTime(0.001, audioCtxRef.current.currentTime);
-        gain.gain.exponentialRampToValueAtTime(targetGain, audioCtxRef.current.currentTime + 0.1);
+          // Gentle chord frequency (e.g. 220Hz harmonic A3)
+          osc.type = "sine";
+          osc.frequency.setValueAtTime(220, audioCtxRef.current.currentTime);
 
-        osc.connect(gain);
-        gain.connect(audioCtxRef.current.destination);
-        osc.start();
+          // Low volume ambient presence
+          const targetGain = Math.min(0.04, volume * 0.05);
+          gain.gain.setValueAtTime(0.001, audioCtxRef.current.currentTime);
+          gain.gain.exponentialRampToValueAtTime(targetGain, audioCtxRef.current.currentTime + 0.1);
 
-        oscNodeRef.current = osc;
-        gainNodeRef.current = gain;
+          osc.connect(gain);
+          gain.connect(audioCtxRef.current.destination);
+          osc.start();
+
+          oscNodeRef.current = osc;
+        }
       } catch {
         // Fallback gracefully if browser audio autoplay is restricted
       }

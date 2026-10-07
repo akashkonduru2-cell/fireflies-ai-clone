@@ -47,7 +47,7 @@ export function DeleteMeetingModal({
               Delete Meeting
             </h3>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 leading-relaxed">
-              Are you sure you want to delete <span className="font-semibold text-slate-700 dark:text-slate-200">"{meeting.title}"</span>?
+              Are you sure you want to delete <span className="font-semibold text-slate-700 dark:text-slate-200">&ldquo;{meeting.title}&rdquo;</span>?
             </p>
             <p className="text-xs text-rose-500 dark:text-rose-400/90 mt-2 bg-rose-50 dark:bg-rose-950/30 p-2.5 rounded-lg border border-rose-200/50 dark:border-rose-900/40">
               This will permanently delete the meeting, all transcript segments, AI summaries, and associated action items. This action cannot be undone.

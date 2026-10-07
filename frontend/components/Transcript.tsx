@@ -1,13 +1,13 @@
 "use client";
 
 import React, { useState, useEffect, useRef, useMemo } from "react";
-import { FileText, Plus, Upload, Check, AlertCircle } from "lucide-react";
+import { FileText, Upload } from "lucide-react";
 import { TranscriptSegment as ITranscriptSegment } from "@/types";
 import { TranscriptSegment } from "./TranscriptSegment";
 import { TranscriptSearch } from "./TranscriptSearch";
 
 interface TranscriptProps {
-  meetingId: number;
+  meetingId?: number;
   segments: ITranscriptSegment[];
   currentTime: number;
   isPlaying: boolean;
@@ -17,7 +17,7 @@ interface TranscriptProps {
 }
 
 export function Transcript({
-  meetingId,
+  meetingId: _meetingId,
   segments,
   currentTime,
   isPlaying,
@@ -78,7 +78,7 @@ export function Transcript({
         });
       }
     }
-  }, [activeSegment?.id, isPlaying]);
+  }, [activeSegment, isPlaying]);
 
   // Scroll to search match when navigating matches
   useEffect(() => {

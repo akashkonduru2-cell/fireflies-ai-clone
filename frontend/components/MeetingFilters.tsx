@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Filter, ArrowUpDown } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
 
 interface MeetingFiltersProps {
   currentFilter: string;

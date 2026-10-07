@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Search, Plus, Sparkles, Bell } from "lucide-react";
+import { Search, Plus } from "lucide-react";
 
 interface HeaderProps {
   title?: string;

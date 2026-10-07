@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { Play, Volume2, Edit2, Check, X, Loader2 } from "lucide-react";
+import { Play, Volume2, Edit2, Check, Loader2 } from "lucide-react";
 import { TranscriptSegment as ITranscriptSegment } from "@/types";
 import { formatTime, getAvatarColor, getInitials } from "@/lib/utils";
 
