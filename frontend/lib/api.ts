@@ -89,6 +89,17 @@ export const api = {
     return request<TranscriptSegment[]>(`/api/meetings/${meetingId}/transcript`, { cache: "no-store" });
   },
 
+  async updateTranscriptSegment(
+    meetingId: number,
+    segmentId: number,
+    data: { text: string; speaker?: string }
+  ): Promise<TranscriptSegment> {
+    return request<TranscriptSegment>(`/api/meetings/${meetingId}/transcript/${segmentId}`, {
+      method: "PATCH",
+      body: JSON.stringify(data),
+    });
+  },
+
   async parseTranscript(meetingId: number, rawText: string): Promise<TranscriptSegment[]> {
     return request<TranscriptSegment[]>(`/api/meetings/${meetingId}/transcript/parse`, {
       method: "POST",

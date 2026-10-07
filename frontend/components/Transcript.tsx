@@ -13,6 +13,7 @@ interface TranscriptProps {
   isPlaying: boolean;
   onSeek: (seconds: number) => void;
   onUpdateTranscript?: (rawText: string) => Promise<void>;
+  onUpdateSegmentText?: (segmentId: number, newText: string) => Promise<void>;
 }
 
 export function Transcript({
@@ -22,6 +23,7 @@ export function Transcript({
   isPlaying,
   onSeek,
   onUpdateTranscript,
+  onUpdateSegmentText,
 }: TranscriptProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
@@ -174,7 +176,6 @@ export function Transcript({
       >
         {segments && segments.length > 0 ? (
           segments.map((seg) => {
-            const isMatch = matchingSegmentIds.includes(seg.id);
             const isCurrentMatch =
               matchingSegmentIds[currentMatchIndex] === seg.id;
             const isActive = activeSegment?.id === seg.id;
@@ -187,6 +188,7 @@ export function Transcript({
                 searchQuery={searchQuery}
                 isCurrentSearchResult={isCurrentMatch}
                 onSeek={onSeek}
+                onUpdateText={onUpdateSegmentText}
                 segmentRef={(el) => {
                   if (el) segmentRefs.current.set(seg.id, el);
                   else segmentRefs.current.delete(seg.id);

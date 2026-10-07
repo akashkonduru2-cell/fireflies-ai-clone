@@ -13,6 +13,13 @@ class TranscriptSegmentCreate(TranscriptSegmentBase):
     pass
 
 
+class TranscriptSegmentUpdate(BaseModel):
+    text: Optional[str] = Field(None, min_length=1, description="Updated transcript line text")
+    speaker: Optional[str] = Field(None, min_length=1, max_length=100)
+    start_time: Optional[float] = Field(None, ge=0)
+    end_time: Optional[float] = Field(None, ge=0)
+
+
 class TranscriptSegmentResponse(TranscriptSegmentBase):
     id: int
     meeting_id: int

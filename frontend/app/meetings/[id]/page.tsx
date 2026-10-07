@@ -133,6 +133,27 @@ export default function MeetingDetailPage() {
     }
   };
 
+  // Individual transcript line update
+  const handleUpdateSegmentText = async (segmentId: number, newText: string) => {
+    try {
+      const updatedSegment = await api.updateTranscriptSegment(meetingId, segmentId, {
+        text: newText,
+      });
+      showToast("Transcript line updated!", "success");
+      if (meeting) {
+        setMeeting({
+          ...meeting,
+          transcript_segments: meeting.transcript_segments.map((seg) =>
+            seg.id === segmentId ? updatedSegment : seg
+          ),
+        });
+      }
+    } catch (err: any) {
+      showToast(err?.message || "Failed to update transcript line", "error");
+      throw err;
+    }
+  };
+
   // Summary update
   const handleUpdateSummary = async (data: {
     overview: string;
@@ -394,7 +415,7 @@ export default function MeetingDetailPage() {
               />
             </div>
 
-            {/* Right Column: Interactive Transcript with Search */}
+            {/* Right Column: Interactive Transcript with Search & Line Editing */}
             <div className="lg:col-span-6">
               <Transcript
                 meetingId={meeting.id}
@@ -403,6 +424,7 @@ export default function MeetingDetailPage() {
                 isPlaying={isPlaying}
                 onSeek={handleSeek}
                 onUpdateTranscript={handleUpdateTranscript}
+                onUpdateSegmentText={handleUpdateSegmentText}
               />
             </div>
           </div>

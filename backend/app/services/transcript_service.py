@@ -1,5 +1,7 @@
 import re
-from typing import List, Tuple
+from typing import List, Tuple, Optional
+from sqlalchemy.orm import Session
+from app.models.transcript import TranscriptSegment
 from app.schemas.transcript import TranscriptSegmentCreate
 
 
@@ -141,3 +143,38 @@ def parse_raw_transcript(raw_text: str) -> List[TranscriptSegmentCreate]:
                 parsed_segments[j].end_time = max(parsed_segments[j].start_time + 1.0, next_start)
 
     return parsed_segments
+
+
+def update_transcript_segment(
+    db: Session,
+    meeting_id: int,
+    segment_id: int,
+    text: Optional[str] = None,
+    speaker: Optional[str] = None,
+    start_time: Optional[float] = None,
+    end_time: Optional[float] = None,
+) -> Optional[TranscriptSegment]:
+    """
+    Updates a specific transcript dialogue line in SQLite.
+    Enforces referential integrity by checking meeting_id.
+    """
+    segment = (
+        db.query(TranscriptSegment)
+        .filter(TranscriptSegment.id == segment_id, TranscriptSegment.meeting_id == meeting_id)
+        .first()
+    )
+    if not segment:
+        return None
+
+    if text is not None and text.strip():
+        segment.text = text.strip()
+    if speaker is not None and speaker.strip():
+        segment.speaker = speaker.strip()
+    if start_time is not None:
+        segment.start_time = round(start_time, 2)
+    if end_time is not None:
+        segment.end_time = round(end_time, 2)
+
+    db.commit()
+    db.refresh(segment)
+    return segment

@@ -13,6 +13,7 @@ from app.schemas.participant import (
 from app.schemas.transcript import (
     TranscriptSegmentBase,
     TranscriptSegmentCreate,
+    TranscriptSegmentUpdate,
     TranscriptSegmentResponse,
     TranscriptParseRequest,
 )
@@ -45,6 +46,7 @@ __all__ = [
     "ParticipantResponse",
     "TranscriptSegmentBase",
     "TranscriptSegmentCreate",
+    "TranscriptSegmentUpdate",
     "TranscriptSegmentResponse",
     "TranscriptParseRequest",
     "SummaryBase",

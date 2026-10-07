@@ -42,14 +42,16 @@ def test_sort_meetings(client):
 
 
 def test_get_meeting_detail(client):
-    # Fetch first meeting id
+    # Fetch first meeting with segments
     list_resp = client.get("/api/meetings")
-    first_id = list_resp.json()[0]["id"]
+    meetings = list_resp.json()
+    first_with_segments = next(m for m in meetings if m["transcript_segments_count"] > 0)
+    target_id = first_with_segments["id"]
 
-    detail_resp = client.get(f"/api/meetings/{first_id}")
+    detail_resp = client.get(f"/api/meetings/{target_id}")
     assert detail_resp.status_code == 200
     detail = detail_resp.json()
-    assert detail["id"] == first_id
+    assert detail["id"] == target_id
     assert len(detail["transcript_segments"]) >= 10
     assert detail["summary"] is not None
     assert len(detail["summary"]["key_takeaways"]) > 0
@@ -119,3 +121,60 @@ def test_delete_meeting_and_cascade(client):
     # Verify not found
     get_res = client.get(f"/api/meetings/{mid}")
     assert get_res.status_code == 404
+
+
+def test_edit_transcript_segment_and_persistence(client):
+    # 1. Fetch meeting with transcript segments
+    meetings = client.get("/api/meetings").json()
+    target_meeting = next(m for m in meetings if m["transcript_segments_count"] > 0)
+    mid = target_meeting["id"]
+
+    # 2. Fetch transcript segments
+    detail = client.get(f"/api/meetings/{mid}").json()
+    first_seg = detail["transcript_segments"][0]
+    seg_id = first_seg["id"]
+    original_text = first_seg["text"]
+
+    # 3. Edit transcript line via PATCH
+    updated_text = "Updated: " + original_text
+    patch_res = client.patch(
+        f"/api/meetings/{mid}/transcript/{seg_id}",
+        json={"text": updated_text}
+    )
+    assert patch_res.status_code == 200
+    updated_data = patch_res.json()
+    assert updated_data["id"] == seg_id
+    assert updated_data["text"] == updated_text
+
+    # 4. Re-fetch meeting detail to verify SQLite persistence
+    detail_after = client.get(f"/api/meetings/{mid}").json()
+    seg_after = next(s for s in detail_after["transcript_segments"] if s["id"] == seg_id)
+    assert seg_after["text"] == updated_text
+
+
+def test_edit_multiple_transcript_segments_independently(client):
+    # Fetch meeting with at least 2 segments
+    meetings = client.get("/api/meetings").json()
+    target_meeting = next(m for m in meetings if m["transcript_segments_count"] >= 2)
+    mid = target_meeting["id"]
+    detail = client.get(f"/api/meetings/{mid}").json()
+    seg1 = detail["transcript_segments"][0]
+    seg2 = detail["transcript_segments"][1]
+
+    # Edit line 1
+    new_text_1 = "Line 1 custom edit verified."
+    patch1 = client.patch(f"/api/meetings/{mid}/transcript/{seg1['id']}", json={"text": new_text_1})
+    assert patch1.status_code == 200
+
+    # Edit line 2
+    new_text_2 = "Line 2 independent edit verified."
+    patch2 = client.patch(f"/api/meetings/{mid}/transcript/{seg2['id']}", json={"text": new_text_2})
+    assert patch2.status_code == 200
+
+    # Verify both changes persisted without overwriting each other
+    detail_after = client.get(f"/api/meetings/{mid}").json()
+    seg1_after = next(s for s in detail_after["transcript_segments"] if s["id"] == seg1["id"])
+    seg2_after = next(s for s in detail_after["transcript_segments"] if s["id"] == seg2["id"])
+
+    assert seg1_after["text"] == new_text_1
+    assert seg2_after["text"] == new_text_2

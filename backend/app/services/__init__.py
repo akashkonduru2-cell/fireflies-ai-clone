@@ -8,6 +8,7 @@ from app.services.meeting_service import (
 from app.services.transcript_service import (
     parse_raw_transcript,
     parse_timestamp_to_seconds,
+    update_transcript_segment,
 )
 from app.services.summary_service import (
     get_meeting_summary,
@@ -29,6 +30,7 @@ __all__ = [
     "delete_meeting",
     "parse_raw_transcript",
     "parse_timestamp_to_seconds",
+    "update_transcript_segment",
     "get_meeting_summary",
     "upsert_meeting_summary",
     "get_meeting_action_items",
