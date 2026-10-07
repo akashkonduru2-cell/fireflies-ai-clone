@@ -32,6 +32,9 @@ app = FastAPI(
     title="Meeting Intelligence Platform API",
     description="Fireflies.ai-inspired Meeting Notes, Audio Synchronization, and Action Items Workspace API",
     version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json",
     lifespan=lifespan
 )
 
